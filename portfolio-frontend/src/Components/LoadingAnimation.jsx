@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-const LoadingAnimation = () => {
+const LoadingAnimation = ({ onComplete }) => {
   return (
     <>
       <div
@@ -44,11 +44,12 @@ const LoadingAnimation = () => {
             duration: 3,
             ease: "linear",
           }}
+          onAnimationComplete={() => onComplete && onComplete()}
           style={{
             position: "absolute",
             left: "50%",
             top: "50%",
-            transform: "translate(-50%, -50%)",
+            transform: "translate(-50%, -50%) translateZ(0)",
             transformOrigin: "50% 50%",
             zIndex: 2,
             willChange: "transform",
@@ -69,13 +70,14 @@ const LoadingAnimation = () => {
               ease: "linear",
             }}
             style={{
-              transform: "translateX(calc(50vw - 250px))",
+              transform: "translateX(calc(50vw - 250px)) translateZ(0)",
               width: "600px",
               height: "600px",
               borderRadius: "50%",
               filter: "blur(80px)",
               position: "relative",
               mixBlendMode: "screen",
+              willChange: "background",
             }}
           >
             {/* Light effect with color animation */}
@@ -98,13 +100,14 @@ const LoadingAnimation = () => {
                 position: "absolute",
                 left: "50%",
                 top: "50%",
-                transform: "translate(-50%, -50%)",
+                transform: "translate(-50%, -50%) translateZ(0)",
                 width: "1400px",
                 height: "1400px",
                 borderRadius: "50%",
                 filter: "blur(120px)",
                 zIndex: -1,
                 mixBlendMode: "screen",
+                willChange: "background, box-shadow",
               }}
             />
           </motion.div>
