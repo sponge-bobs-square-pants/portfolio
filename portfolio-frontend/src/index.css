@@ -8,3 +8,6 @@
 .nav-btn:hover {
   color: white;
 }
+html {
+  position: relative;
+}

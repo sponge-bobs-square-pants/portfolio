@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
+import { useMotionValue, useTransform, motion } from "framer-motion";
 
 const Card = ({
   title,
@@ -8,15 +9,28 @@ const Card = ({
   image,
   src,
   projectNumber,
+  progress, // plain number progress from Section2
+  range,
+  targetScale,
 }) => {
   // Use src as fallback for image.
   const imageUrl = image || src;
   const offsetY = i * 60; // 60px offset between cards
 
+  // Convert progress to a MotionValue
+  const progressMV = useMotionValue(0);
+  useEffect(() => {
+    progressMV.set(progress);
+  }, [progress, progressMV]);
+
+  // Create a motion scale value based on progressMV
+  const scale = useTransform(progressMV, range, [1, targetScale]);
+
   return (
-    <div
+    <motion.div
       className="cardContainer"
       style={{
+        scale, // using MotionValue scale
         height: "100vh",
         display: "flex",
         alignItems: "center",
@@ -26,7 +40,7 @@ const Card = ({
         padding: "0 2rem",
       }}
     >
-      <div
+      <motion.div
         style={{
           background: "white",
           borderRadius: "12px",
@@ -144,8 +158,8 @@ const Card = ({
             )}
           </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
