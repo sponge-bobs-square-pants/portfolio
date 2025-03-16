@@ -9,7 +9,7 @@ const ProjectsSection = () => {
   const handleScroll = (e) => {
     const { scrollTop, scrollHeight, clientHeight } = e.target;
     const progress = scrollTop / (scrollHeight - clientHeight);
-    console.log("Scroll progress:", progress);
+    // console.log("Scroll progress:", progress);
     setScrollProgress(progress);
   };
 

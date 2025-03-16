@@ -9,6 +9,7 @@ const Card = ({
   image,
   src,
   projectNumber,
+  color, // new property from data
   progress, // plain number progress from Section2
   range,
   targetScale,
@@ -39,10 +40,11 @@ const Card = ({
         top: "0px", // All cards stick to the top
         padding: "0 2rem",
       }}
+      transition={{ type: "spring", stiffness: 40, damping: 30 }}
     >
       <motion.div
         style={{
-          background: "white",
+          background: color || "white", // updated to use color from data
           borderRadius: "12px",
           boxShadow: "0 10px 25px rgba(0, 0, 0, 0.1)",
           padding: "3rem 3rem 0 3rem", // updated bottom padding to 0
@@ -55,6 +57,7 @@ const Card = ({
           transform: `translateY(${offsetY - 60}px)`, // Apply a constant -60px offset plus the index-based offset
           zIndex: `${100 - i}`, // Higher cards appear on top
         }}
+        transition={{ type: "spring", stiffness: 40, damping: 30 }}
       >
         {projectNumber && (
           <div

@@ -7,7 +7,8 @@ export const projects = [
     technologies: ["React", "Node.js", "MongoDB"],
     src: "https://images.pexels.com/photos/18166547/pexels-photo-18166547/free-photo-of-back-view-of-woman-in-black-dress-on-sea-shore.jpeg",
     url: "https://project1.example.com",
-    color: "#4158D0",
+    // color: "#63686c",
+    color: "#9bc4cb",
   },
   {
     id: 2,
@@ -17,7 +18,8 @@ export const projects = [
     technologies: ["React", "Firebase", "Tailwind CSS"],
     src: "https://images.pexels.com/photos/18166547/pexels-photo-18166547/free-photo-of-back-view-of-woman-in-black-dress-on-sea-shore.jpeg",
     url: "https://project2.example.com",
-    color: "#C850C0",
+    // color: "#515151",
+    color: "#cfebdf",
   },
   {
     id: 3,
@@ -27,7 +29,8 @@ export const projects = [
     technologies: ["Vue.js", "Express", "PostgreSQL"],
     src: "https://images.pexels.com/photos/18166547/pexels-photo-18166547/free-photo-of-back-view-of-woman-in-black-dress-on-sea-shore.jpeg",
     url: "https://project3.example.com",
-    color: "#FFCC70",
+    // color: "#e4572e",
+    color: "#e2fadb",
   },
   {
     id: 4,
@@ -37,6 +40,7 @@ export const projects = [
     technologies: ["React Native", "GraphQL", "AWS"],
     src: "https://images.pexels.com/photos/18166547/pexels-photo-18166547/free-photo-of-back-view-of-woman-in-black-dress-on-sea-shore.jpeg",
     url: "https://project4.example.com",
-    color: "#3A1C71",
+    // color: "#0f5257",
+    color: "#dbefbc",
   },
 ];
