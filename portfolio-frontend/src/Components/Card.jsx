@@ -1,109 +1,150 @@
 import React from "react";
-// import Image from "next/image";
 
-const Card = ({ title, description, src, url, color, i }) => {
+const Card = ({
+  title,
+  description,
+  technologies = [],
+  i,
+  image,
+  src,
+  projectNumber,
+}) => {
+  // Use src as fallback for image.
+  const imageUrl = image || src;
+  const offsetY = i * 60; // 60px offset between cards
+
   return (
-    <div className="cardContainer">
+    <div
+      className="cardContainer"
+      style={{
+        height: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        position: "sticky",
+        top: "0px", // All cards stick to the top
+        padding: "0 2rem",
+      }}
+    >
       <div
-        className="card"
-        style={{ backgroundColor: color, top: `calc(-5vh + ${i * 25}px)` }}
+        style={{
+          background: "white",
+          borderRadius: "12px",
+          boxShadow: "0 10px 25px rgba(0, 0, 0, 0.1)",
+          padding: "3rem 3rem 0 3rem", // updated bottom padding to 0
+          width: "100%",
+          maxWidth: "800px",
+          minHeight: "400px",
+          display: "flex",
+          flexDirection: "column",
+          position: "relative", // needed for absolute positioning
+          transform: `translateY(${offsetY - 60}px)`, // Apply a constant -60px offset plus the index-based offset
+          zIndex: `${100 - i}`, // Higher cards appear on top
+        }}
       >
-        <h2>{title}</h2>
-        <div className="body">
-          <div className="description">
-            <p>{description}</p>
-            <span>
-              <a href={url} target="_blank" rel="noopener noreferrer">
-                See more
-              </a>
-              <svg
-                width="22"
-                height="12"
-                viewBox="0 0 22 12"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M21.5303 6.53033C21.8232 6.23744 21.8232 5.76256 21.5303 5.46967L16.7574 0.696699C16.4645 0.403806 15.9896 0.403806 15.6967 0.696699C15.4038 0.989592 15.4038 1.46447 15.6967 1.75736L19.9393 6L15.6967 10.2426C15.4038 10.5355 15.4038 11.0104 15.6967 11.3033C15.9896 11.5962 16.4645 11.5962 16.7574 11.3033L21.5303 6.53033ZM0 6.75L21 6.75V5.25L0 5.25L0 6.75Z"
-                  fill="black"
-                />
-              </svg>
-            </span>
+        {projectNumber && (
+          <div
+            style={{
+              position: "absolute",
+              top: "1rem",
+              left: "1rem",
+              fontSize: "2rem",
+              fontWeight: "bold",
+              color: "#ccc",
+            }}
+          >
+            {projectNumber}
           </div>
-          <div className="imageContainer">
-            <div className="inner">
-              <image fill src={`/images/${src}`} alt="image" />
+        )}
+        <div style={{ display: "flex", flexDirection: "row", flex: 1 }}>
+          {/* Left Column 60%: current content */}
+          <div style={{ width: "60%", paddingRight: "1rem" }}>
+            <h3
+              style={{
+                fontSize: "2.8rem",
+                marginBottom: "1rem",
+                color: "#333",
+              }}
+            >
+              {title}
+            </h3>
+            <p
+              style={{
+                fontSize: "1rem",
+                lineHeight: "1.6",
+                marginBottom: "1.5rem",
+                color: "#555",
+              }}
+            >
+              {description}
+            </p>
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                marginTop: "auto",
+              }}
+            >
+              {technologies &&
+                technologies.map((tech, index) => (
+                  <span
+                    key={index}
+                    style={{
+                      background: "#f0f0f0",
+                      padding: "0.5rem 1rem",
+                      borderRadius: "20px",
+                      fontSize: "0.9rem",
+                      marginRight: "0.5rem",
+                      marginBottom: "0.5rem",
+                      color: "#555",
+                    }}
+                  >
+                    {tech}
+                  </span>
+                ))}
             </div>
+          </div>
+          {/* Right Column 40: image */}
+          <div
+            style={{
+              width: "40%",
+              paddingTop: "2rem",
+              paddingLeft: "1rem",
+              height: "100%", // added to ensure full column height
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              overflow: "hidden",
+            }}
+          >
+            {imageUrl ? (
+              <img
+                src={imageUrl}
+                alt={title}
+                style={{
+                  display: "block", // ensures the image is treated as a block element
+                  margin: "0 auto", // centers the image horizontally
+                  width: "100%",
+                  height: "250px",
+                  objectFit: "cover",
+                  borderRadius: "12px",
+                }}
+              />
+            ) : (
+              <div
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  background: "gray",
+                  borderRadius: "12px",
+                }}
+              >
+                No image
+              </div>
+            )}
           </div>
         </div>
       </div>
-      <style jsx>{`
-        .cardContainer {
-          height: 100vh;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          position: sticky;
-          top: 0px;
-        }
-        .card {
-          display: flex;
-          flex-direction: column;
-          position: relative;
-          height: 500px;
-          width: 1000px;
-          border-radius: 25px;
-          padding: 50px;
-          transform-origin: top;
-        }
-        .card h2 {
-          text-align: center;
-          margin: 0px;
-          font-size: 28px;
-        }
-        .body {
-          display: flex;
-          height: 100%;
-          margin-top: 50px;
-          gap: 50px;
-        }
-        .description {
-          width: 40%;
-          position: relative;
-          top: 10%;
-        }
-        .description p {
-          font-size: 16px;
-        }
-        .description p::first-letter {
-          font-size: 28px;
-          font-family: "Title";
-        }
-        .description span {
-          display: flex;
-          align-items: center;
-          gap: 5px;
-        }
-        .description a {
-          font-size: 12px;
-          text-decoration: underline;
-          cursor: pointer;
-        }
-        .imageContainer {
-          position: relative;
-          width: 60%;
-          height: 100%;
-          border-radius: 25px;
-          overflow: hidden;
-        }
-        .inner {
-          width: 100%;
-          height: 100%;
-        }
-        .imageContainer img {
-          object-fit: cover;
-        }
-      `}</style>
     </div>
   );
 };

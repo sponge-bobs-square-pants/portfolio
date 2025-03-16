@@ -53,7 +53,7 @@ const ProjectsSection = () => {
         }}
       >
         {projects.map((project, index) => {
-          return <Card key={index} {...project} />;
+          return <Card key={index} i={index} {...project} />;
         })}
       </div>
     </div>
