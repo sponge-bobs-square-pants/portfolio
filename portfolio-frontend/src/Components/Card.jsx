@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from "react";
 import { useMotionValue, useTransform, motion } from "framer-motion";
 
 const Card = ({
+  layoutId,
   title,
   description,
   technologies = [],
@@ -13,6 +14,8 @@ const Card = ({
   progress, // plain number progress from Section2
   range,
   targetScale,
+  id,
+  onRemove, // added onRemove prop
 }) => {
   // Use src as fallback for image.
   const imageUrl = image || src;
@@ -30,6 +33,17 @@ const Card = ({
   return (
     <motion.div
       className="cardContainer"
+      layoutId={layoutId}
+      layout
+      exit={{
+        scale: 0.5,
+        y: window.innerHeight,
+        opacity: 0,
+        transition: {
+          duration: 0.2,
+          ease: [0.32, 0, 0.67, 0],
+        },
+      }}
       style={{
         scale, // using MotionValue scale
         height: "100vh",
@@ -39,6 +53,7 @@ const Card = ({
         position: "sticky",
         top: "0px", // All cards stick to the top
         padding: "0 2rem",
+        transformOrigin: "center",
       }}
       transition={{ type: "spring", stiffness: 40, damping: 30 }}
     >
@@ -59,6 +74,85 @@ const Card = ({
         }}
         transition={{ type: "spring", stiffness: 40, damping: 30 }}
       >
+        {/* New Top Left Buttons */}
+        <div
+          style={{
+            position: "absolute",
+            top: "1rem",
+            left: "1rem",
+            display: "flex",
+            gap: "0.5rem",
+            zIndex: 2,
+          }}
+        >
+          <motion.div
+            whileHover={{ scale: 1.2 }}
+            onClick={() => {
+              console.log("Remove project", i + 1);
+              onRemove(id);
+            }} // added onClick event
+            style={{
+              width: "12px",
+              height: "12px",
+              borderRadius: "50%",
+              backgroundColor: "#ff5f56",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+            }}
+          >
+            <motion.span
+              initial={{ opacity: 0 }}
+              whileHover={{ opacity: 1, transition: { duration: 0.2 } }}
+              style={{ fontSize: "10px", color: "white" }}
+            >
+              ×
+            </motion.span>
+          </motion.div>
+          <motion.div
+            whileHover={{ scale: 1.2 }}
+            style={{
+              width: "12px",
+              height: "12px",
+              borderRadius: "50%",
+              backgroundColor: "#ffbd2e",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+            }}
+          >
+            <motion.span
+              initial={{ opacity: 0 }}
+              whileHover={{ opacity: 1, transition: { duration: 0.2 } }}
+              style={{ fontSize: "10px", color: "white" }}
+            >
+              –
+            </motion.span>
+          </motion.div>
+          <motion.div
+            whileHover={{ scale: 1.2 }}
+            style={{
+              width: "12px",
+              height: "12px",
+              borderRadius: "50%",
+              backgroundColor: "#27c93f",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+            }}
+          >
+            <motion.span
+              initial={{ opacity: 0 }}
+              whileHover={{ opacity: 1, transition: { duration: 0.2 } }}
+              style={{ fontSize: "10px", color: "white" }}
+            >
+              +
+            </motion.span>
+          </motion.div>
+        </div>
         {projectNumber && (
           <div
             style={{
