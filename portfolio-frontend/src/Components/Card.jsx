@@ -55,7 +55,7 @@ const Card = ({
         padding: "0 2rem",
         transformOrigin: "center",
       }}
-      transition={{ type: "spring", stiffness: 40, damping: 30 }}
+      transition={{ type: "spring", stiffness: 3, damping: 30 }}
     >
       <motion.div
         style={{
