@@ -22,8 +22,10 @@ const Introduction = () => {
       <h1
         style={{
           margin: 0,
-          padding: 0, // Removed paddingBottom
-          fontSize: "16rem",
+          padding: 0,
+          // paddingLeft: "0.2rem",
+          // paddingRight: "0.2rem",
+          fontSize: "15rem",
           lineHeight: "0.9", // Tightens line height to reduce extra space
         }}
       >

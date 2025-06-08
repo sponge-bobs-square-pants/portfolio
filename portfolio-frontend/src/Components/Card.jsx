@@ -24,7 +24,21 @@ const Card = ({
   // Convert progress to a MotionValue
   const progressMV = useMotionValue(0);
   useEffect(() => {
-    progressMV.set(progress);
+    // Use requestAnimationFrame for smoother updates during rapid scrolling
+    const updateProgress = () => {
+      const current = progressMV.get();
+      const diff = progress - current;
+      // Apply immediate changes during fast scrolling
+      if (Math.abs(diff) > 0.1) {
+        progressMV.set(progress);
+      } else {
+        progressMV.set(current + diff * 0.5);
+        if (Math.abs(diff) > 0.001) {
+          requestAnimationFrame(updateProgress);
+        }
+      }
+    };
+    requestAnimationFrame(updateProgress);
   }, [progress, progressMV]);
 
   // Create a motion scale value based on progressMV
@@ -55,7 +69,11 @@ const Card = ({
         padding: "0 2rem",
         transformOrigin: "center",
       }}
-      transition={{ type: "spring", stiffness: 3, damping: 30 }}
+      transition={{
+        type: "tween",
+        ease: [0.25, 0.1, 0.25, 1], // A more responsive cubic bezier
+        duration: 0.3, // Shorter duration to keep up with fast scrolling
+      }}
     >
       <motion.div
         style={{

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import LoadingAnimation from "../Components/LoadingAnimation";
 import Navbar from "../Components/Navbar";
 import Introduction from "../Components/Introduction";
-import ProjectsSection from "../Components/ProjectsSection";
 import Section2 from "../Components/Section2";
 
 const HomePage = () => {
