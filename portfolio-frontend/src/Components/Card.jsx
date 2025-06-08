@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import { useMotionValue, useTransform, motion } from "framer-motion";
+import { useMotionValue, useTransform, motion, useSpring } from "framer-motion";
 
 const Card = ({
   layoutId,
@@ -23,22 +23,21 @@ const Card = ({
 
   // Convert progress to a MotionValue
   const progressMV = useMotionValue(0);
+
   useEffect(() => {
-    // Use requestAnimationFrame for smoother updates during rapid scrolling
-    const updateProgress = () => {
+    // Smooth the progress updates to prevent jerkiness
+    const smoothUpdate = () => {
       const current = progressMV.get();
       const diff = progress - current;
-      // Apply immediate changes during fast scrolling
-      if (Math.abs(diff) > 0.1) {
-        progressMV.set(progress);
-      } else {
-        progressMV.set(current + diff * 0.5);
-        if (Math.abs(diff) > 0.001) {
-          requestAnimationFrame(updateProgress);
-        }
-      }
+
+      if (Math.abs(diff) < 0.001) return;
+
+      // Use a smaller interpolation factor for smoother movement
+      progressMV.set(current + diff * 0.15);
+      requestAnimationFrame(smoothUpdate);
     };
-    requestAnimationFrame(updateProgress);
+
+    requestAnimationFrame(smoothUpdate);
   }, [progress, progressMV]);
 
   // Create a motion scale value based on progressMV
@@ -54,7 +53,7 @@ const Card = ({
         y: window.innerHeight,
         opacity: 0,
         transition: {
-          duration: 0.2,
+          duration: 0.3,
           ease: [0.32, 0, 0.67, 0],
         },
       }}
@@ -90,7 +89,11 @@ const Card = ({
           transform: `translateY(${offsetY - 60}px)`, // Apply a constant -60px offset plus the index-based offset
           zIndex: `${100 - i}`, // Higher cards appear on top
         }}
-        transition={{ type: "spring", stiffness: 40, damping: 30 }}
+        transition={{
+          type: "spring",
+          stiffness: 40,
+          damping: 30,
+        }}
       >
         {/* New Top Left Buttons */}
         <div
@@ -104,7 +107,8 @@ const Card = ({
           }}
         >
           <motion.div
-            whileHover={{ scale: 1.2 }}
+            whileHover={{ scale: 1 }}
+            whileTap={{ scale: 0.9 }}
             onClick={() => {
               console.log("Remove project", i + 1);
               onRemove(id);
@@ -129,7 +133,8 @@ const Card = ({
             </motion.span>
           </motion.div>
           <motion.div
-            whileHover={{ scale: 1.2 }}
+            whileHover={{ scale: 1 }}
+            whileTap={{ scale: 0.9 }}
             style={{
               width: "12px",
               height: "12px",
@@ -150,7 +155,8 @@ const Card = ({
             </motion.span>
           </motion.div>
           <motion.div
-            whileHover={{ scale: 1.2 }}
+            whileHover={{ scale: 1 }}
+            whileTap={{ scale: 0.9 }}
             style={{
               width: "12px",
               height: "12px",

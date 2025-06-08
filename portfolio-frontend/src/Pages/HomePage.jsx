@@ -3,10 +3,12 @@ import LoadingAnimation from "../Components/LoadingAnimation";
 import Navbar from "../Components/Navbar";
 import Introduction from "../Components/Introduction";
 import Section2 from "../Components/Section2";
+import Section3 from "../Components/Section3";
 
 const HomePage = () => {
   const [loaded, setLoaded] = useState(false);
   const [contentVisible, setContentVisible] = useState(false);
+  const [activeSection, setActiveSection] = useState("section1");
 
   // Handle the staged transitions
   useEffect(() => {
@@ -20,9 +22,65 @@ const HomePage = () => {
     }
   }, [loaded]);
 
+  // Scroll detection to update active section
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ["section1", "section2", "section3"];
+      const scrollContainer = document.querySelector("[data-scroll-container]");
+
+      if (!scrollContainer) return;
+
+      const scrollTop = scrollContainer.scrollTop;
+      const containerHeight = scrollContainer.clientHeight;
+
+      // Calculate which section is most visible
+      let currentSection = "section1";
+
+      for (const sectionId of sections) {
+        const section = document.getElementById(sectionId);
+        if (section) {
+          const rect = section.getBoundingClientRect();
+          const containerRect = scrollContainer.getBoundingClientRect();
+
+          // Check if section is in viewport
+          const sectionTop = rect.top - containerRect.top;
+          const sectionBottom = rect.bottom - containerRect.top;
+
+          // If section covers more than 50% of the viewport, it's active
+          if (
+            sectionTop <= containerHeight * 0.5 &&
+            sectionBottom >= containerHeight * 0.5
+          ) {
+            currentSection = sectionId;
+            break;
+          }
+        }
+      }
+
+      setActiveSection(currentSection);
+    };
+
+    if (contentVisible) {
+      const scrollContainer = document.querySelector("[data-scroll-container]");
+      if (scrollContainer) {
+        scrollContainer.addEventListener("scroll", handleScroll);
+        // Initial check
+        handleScroll();
+
+        return () =>
+          scrollContainer.removeEventListener("scroll", handleScroll);
+      }
+    }
+  }, [contentVisible]);
+
   // Function to handle loading completion from animation
   const handleAnimationComplete = () => {
     setLoaded(true);
+  };
+
+  // Function to handle navbar clicks
+  const handleNavClick = (sectionId) => {
+    setActiveSection(sectionId);
   };
 
   return (
@@ -55,11 +113,12 @@ const HomePage = () => {
           transition: "opacity 2s ease 0.5s",
         }}
       >
-        <Navbar />
+        <Navbar activeSection={activeSection} onNavClick={handleNavClick} />
       </div>
 
       {/* Full-screen scrollable content container with slow fade and transform */}
       <div
+        data-scroll-container
         style={{
           height: "100vh",
           overflowY: "scroll",
@@ -81,10 +140,7 @@ const HomePage = () => {
             scrollSnapAlign: "start",
             margin: 0,
             padding: 0,
-            // fontSize: "2rem",
             opacity: contentVisible ? 1 : 0,
-            // Removed transform animation to prevent slight backward movement
-            // transform: `translateY(${contentVisible ? "0" : "20px"})`,
             transition: "opacity 3s ease 0.2s",
             background: "transparent",
           }}
@@ -102,8 +158,6 @@ const HomePage = () => {
             alignItems: "center",
             fontSize: "2rem",
             opacity: contentVisible ? 1 : 0,
-            // Removed transform animation to prevent slight backward movement
-            // transform: `translateY(${contentVisible ? "0" : "20px"})`,
             transition: "opacity 3s ease 0.4s",
             background: "transparent",
           }}
@@ -121,13 +175,11 @@ const HomePage = () => {
             alignItems: "center",
             fontSize: "2rem",
             opacity: contentVisible ? 1 : 0,
-            // Removed transform animation to prevent slight backward movement
-            // transform: `translateY(${contentVisible ? "0" : "20px"})`,
             transition: "opacity 3s ease 0.6s",
             background: "transparent",
           }}
         >
-          Section 3
+          <Section3 />
         </div>
       </div>
     </div>

@@ -47,8 +47,8 @@ const ProjectsSection = () => {
           My Projects
         </h2>
         <p style={{ fontSize: "1.2rem", color: "#666", lineHeight: "1.6" }}>
-          Here are some of the projects I've worked on. Scroll down to discover
-          more projects.
+          Here are some of my most recent projects. Scroll over them to see the
+          projects.
         </p>
       </div>
 

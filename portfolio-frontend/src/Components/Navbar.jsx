@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 const scrollToSection = (sectionId) => {
   const section = document.getElementById(sectionId);
   if (section) section.scrollIntoView({ behavior: "smooth" });
 };
 
-// Enhanced NavButton with smooth transition and active state
+// Enhanced NavButton without individual background
 const NavButton = ({ children, onClick, isActive, sectionId }) => {
   const [hover, setHover] = useState(false);
 
@@ -13,19 +13,21 @@ const NavButton = ({ children, onClick, isActive, sectionId }) => {
     <button
       id={`nav-${sectionId}`}
       style={{
-        background: isActive ? "#4C410A" : "none", // Yellow background for active state
+        background: "none", // No individual background
         border: "none",
         color: isActive ? "#F4D205" : hover ? "white" : "#808181",
         cursor: "pointer",
         fontSize: "1.25rem",
-        margin: "1px", // Add margin to keep highlighted tabs within navbar
+        margin: "1px",
         padding: "19px 14px",
-        borderRadius: "1.5rem", // Rounded corners
-        transition: "all 0.3s ease", // Smooth transition for all changes
-        height: "calc(100% - 16px)", // Full height minus margins
+        borderRadius: "1.5rem",
+        transition: "color 0.3s ease", // Only animate color now
+        height: "calc(100% - 16px)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        position: "relative",
+        zIndex: 2, // Above the sliding background
       }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
@@ -39,27 +41,79 @@ const NavButton = ({ children, onClick, isActive, sectionId }) => {
   );
 };
 
-const Navbar = () => {
-  // State to track the active section
-  const [activeSection, setActiveSection] = useState("section1"); // Default to first section
+const Navbar = ({ activeSection, onNavClick }) => {
+  const navRef = useRef(null);
+  const [highlightStyle, setHighlightStyle] = useState({});
+
+  const sections = ["section1", "section2", "section3", "chat"];
+
+  // Update highlight position when activeSection changes
+  useEffect(() => {
+    const updateHighlight = () => {
+      if (!navRef.current) return;
+
+      const activeButton = document.getElementById(`nav-${activeSection}`);
+      if (!activeButton) return;
+
+      const navRect = navRef.current.getBoundingClientRect();
+      const buttonRect = activeButton.getBoundingClientRect();
+
+      const left = buttonRect.left - navRect.left;
+      const width = buttonRect.width;
+
+      setHighlightStyle({
+        left: `${left}px`,
+        width: `${width}px`,
+        opacity: 1,
+      });
+    };
+
+    // Small delay to ensure DOM is ready
+    const timer = setTimeout(updateHighlight, 10);
+
+    // Also update on window resize
+    window.addEventListener("resize", updateHighlight);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", updateHighlight);
+    };
+  }, [activeSection]);
 
   const handleNavClick = (sectionId) => {
-    setActiveSection(sectionId);
+    onNavClick(sectionId);
   };
 
   return (
     <nav
+      ref={navRef}
       style={{
         background: "black",
         borderRadius: "2rem",
         height: "47px",
         display: "flex",
         alignItems: "center",
-        justifyContent: "space-around", // Space buttons evenly
-        width: "auto", // Auto width based on content
-        padding: "0 4px", // Small padding on the edges
+        justifyContent: "space-around",
+        width: "auto",
+        padding: "0 4px",
+        position: "relative", // For absolute positioning of highlight
       }}
     >
+      {/* Sliding highlight background */}
+      <div
+        style={{
+          position: "absolute",
+          top: "4px", // Adjust to match button margins
+          height: "calc(100% - 8px)", // Match button height
+          background: "#4C410A",
+          borderRadius: "1.5rem",
+          transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)", // Smooth easing
+          zIndex: 1,
+          opacity: 0,
+          ...highlightStyle,
+        }}
+      />
+
       <NavButton
         onClick={handleNavClick}
         isActive={activeSection === "section1"}
