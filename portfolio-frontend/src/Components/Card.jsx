@@ -544,7 +544,7 @@ function getTechIcon(tech) {
   } else if (lowerTech.includes("postgres")) {
     return <img src={Postgres} alt="Postgres" style={{ width: "14px" }} />;
   } else if (lowerTech.includes("python")) {
-    return <img src={Python} alt="Postgres" style={{ width: "14px" }} />;
+    return <img src={Python} alt="Python" style={{ width: "12px" }} />;
   } else {
     return (
       <svg width="12" height="12" viewBox="0 0 24 24" fill="#777">
