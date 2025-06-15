@@ -45,7 +45,7 @@ const Navbar = ({ activeSection, onNavClick }) => {
   const navRef = useRef(null);
   const [highlightStyle, setHighlightStyle] = useState({});
 
-  const sections = ["section1", "section2", "section3", "chat"];
+  const sections = ["section1", "section2", "section3", "section4"];
 
   // Update highlight position when activeSection changes
   useEffect(() => {
@@ -137,8 +137,8 @@ const Navbar = ({ activeSection, onNavClick }) => {
       </NavButton>
       <NavButton
         onClick={handleNavClick}
-        isActive={activeSection === "chat"}
-        sectionId="chat"
+        isActive={activeSection === "section4"}
+        sectionId="section4"
       >
         Chat
       </NavButton>

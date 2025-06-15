@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { ChevronRight } from "lucide-react";
 import Paruluniersity from "../assets/paruluniversity.jpg";
 import ITMO from "../assets/itmo.jpeg";
 import wildberries from "../assets/wwildberries.jpeg";
 import ItmoLogo from "../assets/itmo_logo.png";
 import Alendei from "../assets/Alendei.png";
 import GradScaler from "../assets/gradscaler.jpeg";
+
 const Section3 = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
 
@@ -100,16 +102,21 @@ const Section3 = () => {
   ];
 
   return (
-    <div className="w-full min-h-screen bg-transparent p-8 flex flex-col items-center justify-center">
-      {/* Title */}
-      {/* <div className="text-center mb-16">
-        <h2 className="text-4xl font-bold mb-4 text-gray-800">
-          My Journey Timeline
-        </h2>
-      </div> */}
-
+    <div className="w-full min-h-screen bg-transparent p-8 flex flex-col items-center justify-center relative">
       {/* Timeline Container */}
-      <div className="w-full max-w-7xl overflow-x-auto py-8">
+      <div
+        className="w-full overflow-x-auto py-8"
+        style={{
+          scrollbarWidth: "none" /* Firefox */,
+          msOverflowStyle: "none" /* IE and Edge */,
+        }}
+      >
+        <style jsx>{`
+          /* Hide scrollbar for Chrome, Safari and Opera */
+          div.overflow-x-auto::-webkit-scrollbar {
+            display: none;
+          }
+        `}</style>
         <div
           style={{
             position: "relative",
@@ -126,7 +133,7 @@ const Section3 = () => {
 
           {/* Blue dots rendered separately to ensure they're on top */}
           {timelineEvents.map((event, index) => {
-            const leftPosition = index * 350 + 175;
+            const leftPosition = index * 350 + 195;
             return (
               <div
                 key={`dot-${event.id}`}
@@ -162,6 +169,8 @@ const Section3 = () => {
                   position: "absolute",
                   left: `${leftPosition}px`,
                   top: "0",
+                  marginLeft: "20px",
+                  marginRight: "20px",
                   width: "350px",
                   height: "100%",
                   display: "flex",
@@ -282,6 +291,12 @@ const Section3 = () => {
             );
           })}
         </div>
+      </div>
+
+      {/* Scroll Right Instruction - Fixed to Section3 bottom */}
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex items-center gap-2 text-gray-500">
+        <span className="text-sm font-medium">SCROLL RIGHT FOR MORE</span>
+        <ChevronRight className="w-4 h-4" />
       </div>
     </div>
   );

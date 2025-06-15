@@ -4,6 +4,7 @@ import Navbar from "../Components/Navbar";
 import Introduction from "../Components/Introduction";
 import Section2 from "../Components/Section2";
 import Section3 from "../Components/Section3";
+import Section4 from "../Components/Section4";
 
 const HomePage = () => {
   const [loaded, setLoaded] = useState(false);
@@ -25,7 +26,7 @@ const HomePage = () => {
   // Scroll detection to update active section
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ["section1", "section2", "section3"];
+      const sections = ["section1", "section2", "section3", "section4"];
       const scrollContainer = document.querySelector("[data-scroll-container]");
 
       if (!scrollContainer) return;
@@ -180,6 +181,23 @@ const HomePage = () => {
           }}
         >
           <Section3 />
+        </div>
+        <div
+          id="section4"
+          style={{
+            height: "100vh",
+            width: "100vw",
+            scrollSnapAlign: "start",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            fontSize: "2rem",
+            opacity: contentVisible ? 1 : 0,
+            transition: "opacity 3s ease 0.6s",
+            background: "transparent",
+          }}
+        >
+          <Section4 />
         </div>
       </div>
     </div>
