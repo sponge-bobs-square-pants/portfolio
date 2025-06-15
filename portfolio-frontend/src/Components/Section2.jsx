@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { projects as initialProjects } from "../assets/data";
 import Card from "./Card";
 import { AnimatePresence } from "framer-motion";
@@ -9,30 +9,36 @@ const ProjectsSection = () => {
   const [projectList, setProjectList] = useState(initialProjects);
   const [expandedCardId, setExpandedCardId] = useState(null);
   const [savedScrollPosition, setSavedScrollPosition] = useState(0);
-  const scrollingRef = useRef(false); // Track if we're actively scrolling
+  const scrollingRef = useRef(false);
+  const rafRef = useRef(null); // Add RAF reference
 
-  const handleScroll = (e) => {
-    if (expandedCardId !== null) return; // Don't process scroll when expanded
+  // Throttle scroll updates using requestAnimationFrame
+  const handleScroll = useCallback(
+    (e) => {
+      if (expandedCardId !== null) return;
 
-    const { scrollTop, scrollHeight, clientHeight } = e.target;
-    const progress = scrollTop / (scrollHeight - clientHeight);
+      // Cancel previous RAF if still pending
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
 
-    // Set scrolling flag and update progress
-    scrollingRef.current = true;
-    setScrollProgress(progress);
+      rafRef.current = requestAnimationFrame(() => {
+        const { scrollTop, scrollHeight, clientHeight } = e.target;
+        const progress = scrollTop / (scrollHeight - clientHeight);
 
-    // Save scroll position with debounce to reduce updates
-    if (!scrollingRef.current) {
-      setSavedScrollPosition(scrollTop);
-    }
+        scrollingRef.current = true;
+        setScrollProgress(progress);
 
-    // Clear the scrolling flag after a delay
-    clearTimeout(window.scrollTimeout);
-    window.scrollTimeout = setTimeout(() => {
-      scrollingRef.current = false;
-      setSavedScrollPosition(scrollTop);
-    }, 100);
-  };
+        // Debounce scroll position saving
+        clearTimeout(window.scrollTimeout);
+        window.scrollTimeout = setTimeout(() => {
+          scrollingRef.current = false;
+          setSavedScrollPosition(scrollTop);
+        }, 50); // Reduced debounce time
+      });
+    },
+    [expandedCardId]
+  );
 
   // Use a more stable approach to restore scroll position
   useEffect(() => {
@@ -73,9 +79,12 @@ const ProjectsSection = () => {
     setExpandedCardId(null);
   };
 
-  // Clean up timeout on unmount
+  // Clean up RAF on unmount
   useEffect(() => {
     return () => {
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
       clearTimeout(window.scrollTimeout);
     };
   }, []);
@@ -116,25 +125,29 @@ const ProjectsSection = () => {
         ref={container}
         onScroll={handleScroll}
         style={{
-          width: "70%", // Always 70%
+          width: "70%",
           height: "100vh",
           overflowY: expandedCardId !== null ? "hidden" : "auto",
           overflowX: "hidden",
           position: "relative",
+          // Add hardware acceleration
+          willChange: expandedCardId === null ? "scroll-position" : "auto",
         }}
       >
-        <AnimatePresence>
+        <AnimatePresence mode="popLayout">
+          {" "}
+          {/* Add mode for better performance */}
           {projectList.map((project, index) => {
             const targetScale = 1 - (projectList.length - index) * 0.05;
             return (
               <Card
-                key={project.projectNumber || index}
+                key={project.id} // Use ID instead of index for better React reconciliation
                 i={index}
                 {...project}
                 progress={scrollProgress}
                 range={[index * 0.25, 1]}
                 targetScale={targetScale}
-                onRemove={(i) => handleRemove(i)}
+                onRemove={handleRemove}
                 onExpand={handleExpand}
                 onMinimize={handleMinimize}
                 isExpanded={expandedCardId === project.id}

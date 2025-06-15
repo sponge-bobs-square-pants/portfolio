@@ -1,5 +1,5 @@
-import React, { useRef, useEffect } from "react";
-import { useMotionValue, useTransform, motion, useSpring } from "framer-motion";
+import React, { useRef, useEffect, useMemo } from "react";
+import { motion } from "framer-motion";
 import Mongodb from "../assets/mongodb.svg";
 import ReactImg from "../assets/react.svg";
 import Nodejs from "../assets/node-js.svg";
@@ -36,24 +36,31 @@ const Card = ({
   const imageUrl = image || src;
   const offsetY = i * 60; // 60px offset between cards
 
-  // Convert progress to a MotionValue with smoother updates
-  const progressMV = useMotionValue(0);
-  const springConfig = { damping: 30, stiffness: 200 };
-  const smoothProgress = useSpring(progressMV, springConfig);
+  // Calculate scale directly without MotionValue overhead
+  const scale = useMemo(() => {
+    if (isExpanded) return 1;
 
-  useEffect(() => {
-    // Set the motion value directly to avoid jank
-    progressMV.set(progress);
-  }, [progress, progressMV]);
+    const [start, end] = range;
+    const clampedProgress = Math.max(
+      0,
+      Math.min(1, (progress - start) / (end - start))
+    );
+    return 1 + (targetScale - 1) * clampedProgress;
+  }, [progress, range, targetScale, isExpanded]);
 
-  // Create a motion scale value based on smoothProgress
-  const scale = useTransform(smoothProgress, range, [1, targetScale]);
+  // Memoize transform values to prevent recalculation
+  const cardTransform = useMemo(() => {
+    if (isExpanded) {
+      return "translateY(0px) scale(1.2)";
+    }
+    return `translateY(${offsetY - 60}px)`;
+  }, [isExpanded, offsetY]);
 
   return (
     <motion.div
       className="cardContainer"
       layoutId={layoutId}
-      layout
+      layout={false} // Disable layout animation for better performance
       exit={{
         scale: 0.5,
         y: window.innerHeight,
@@ -64,7 +71,7 @@ const Card = ({
         },
       }}
       style={{
-        scale: isExpanded ? 1 : scale, // No scale at container level when expanded
+        scale: scale,
         height: "100vh",
         display: isOtherCardExpanded ? "none" : "flex",
         alignItems: "center",
@@ -78,9 +85,16 @@ const Card = ({
         pointerEvents: "auto",
       }}
       transition={{
-        type: "spring",
-        damping: 25,
-        stiffness: 120,
+        scale: {
+          type: "tween", // Use tween instead of spring for better performance
+          duration: 0.1,
+          ease: "easeOut",
+        },
+        default: {
+          type: "spring",
+          damping: 25,
+          stiffness: 120,
+        },
       }}
     >
       <motion.div
@@ -95,16 +109,16 @@ const Card = ({
           display: "flex",
           flexDirection: "column",
           position: "relative",
-          transform: isExpanded
-            ? "translateY(0px) scale(1.2)" // Apply a more moderate scale when expanded
-            : `translateY(${offsetY - 60}px)`,
+          transform: cardTransform,
           zIndex: isExpanded ? 1000 : `${100 - i}`,
           transformOrigin: "center center",
         }}
         transition={{
-          type: "spring",
-          stiffness: 40,
-          damping: 30,
+          transform: {
+            type: "tween",
+            duration: 0.2,
+            ease: "easeOut",
+          },
         }}
       >
         {/* New Top Left Buttons */}
