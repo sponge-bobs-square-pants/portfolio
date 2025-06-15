@@ -5,6 +5,8 @@ import Introduction from "../Components/Introduction";
 import Section2 from "../Components/Section2";
 import Section3 from "../Components/Section3";
 import Section4 from "../Components/Section4";
+import { useDispatch } from "react-redux";
+import { NewConversation } from "../../features/chatSlice";
 
 const HomePage = () => {
   const [loaded, setLoaded] = useState(false);

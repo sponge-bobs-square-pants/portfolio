@@ -1,45 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Send, Instagram, Linkedin, Mail, MessageCircle } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addMessage,
+  NewConversation,
+  TrinityChat,
+} from "../../features/chatSlice";
 
 const Section4 = () => {
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      text: "Hey! 👋 Thanks for checking out my work!",
-      sender: "me",
-      timestamp: "now",
-    },
-    {
-      id: 2,
-      text: "Let's connect and create something amazing together!",
-      sender: "me",
-      timestamp: "now",
-    },
-  ]);
+  const { messages, thread_id } = useSelector((state) => state.chat);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(NewConversation());
+  }, []);
 
   const handleSendMessage = (e) => {
     e.preventDefault();
-    if (message.trim()) {
-      const newMessage = {
-        id: messages.length + 1,
-        text: message,
-        sender: "user",
-        timestamp: "now",
-      };
-      setMessages([...messages, newMessage]);
-      setMessage("");
-
-      setTimeout(() => {
-        const reply = {
-          id: messages.length + 2,
-          text: "Got it! I'll get back to you soon 🚀",
-          sender: "me",
-          timestamp: "now",
-        };
-        setMessages((prev) => [...prev, reply]);
-      }, 1000);
-    }
+    if (message.trim() === "") return;
+    dispatch(addMessage({ text: message }));
+    dispatch(
+      TrinityChat({
+        message: message,
+        thread_id: thread_id,
+      })
+    );
+    setMessage("");
   };
 
   const socialLinks = [
@@ -130,7 +118,7 @@ const Section4 = () => {
                   fontWeight: "600",
                 }}
               >
-                Quick Chat
+                Trynity
               </h3>
               <p style={{ color: "#808181", margin: 0, fontSize: "0.85rem" }}>
                 Online now
@@ -194,7 +182,7 @@ const Section4 = () => {
               type="text"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="Type your message..."
+              placeholder="Message Trynity"
               onKeyPress={(e) => {
                 if (e.key === "Enter") {
                   handleSendMessage(e);
