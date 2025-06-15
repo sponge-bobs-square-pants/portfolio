@@ -346,7 +346,7 @@ const Card = ({
                         </h4>
                         <ul
                           style={{
-                            paddingLeft: "1rem", // Reduced from 1.2rem
+                            paddingLeft: "0rem", // Reduced from 1.2rem
                             color: "#555",
                             margin: "0.4rem 0", // Reduced from 0.5rem
                             fontSize: "0.8rem", // Reduced from 0.9rem
@@ -354,7 +354,7 @@ const Card = ({
                         >
                           {learnings.map((learning, idx) => (
                             <li key={idx} style={{ marginBottom: "0.2rem" }}>
-                              {" "}
+                              {""}
                               {/* Reduced from 0.3rem */}
                               {learning}
                             </li>

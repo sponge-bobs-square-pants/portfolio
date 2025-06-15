@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-
+import Paruluniersity from "../assets/paruluniversity.jpg";
+import ITMO from "../assets/itmo.jpeg";
+import wildberries from "../assets/wwildberries.jpeg";
+import ItmoLogo from "../assets/itmo_logo.png";
+import Alendei from "../assets/Alendei.png";
+import GradScaler from "../assets/gradscaler.jpeg";
 const Section3 = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
 
@@ -15,10 +20,11 @@ const Section3 = () => {
       description:
         "I graduated from Parul University with a degree in Computer Science.",
       color: "#9b59b6",
+      images: [Paruluniersity],
     },
     {
       id: 2,
-      title: "Company(NDA)",
+      title: "NDA",
       subtitle: "",
       date: "Jan",
       day: "01",
@@ -26,6 +32,7 @@ const Section3 = () => {
       type: "work",
       description: "Worked as a Web Scraping Developer for 6 months",
       color: "#4a90e2",
+      images: [],
     },
     {
       id: 3,
@@ -38,6 +45,7 @@ const Section3 = () => {
       description:
         "Graduated with a Master's in Information Security from ITMO University, Russia.",
       color: "#e91e63",
+      images: [ITMO, ItmoLogo],
     },
     {
       id: 4,
@@ -49,6 +57,7 @@ const Section3 = () => {
       type: "work",
       description: "Worked as a Jr. Developer at wildberries, Russia.",
       color: "#e74c3c",
+      images: [wildberries],
     },
     {
       id: 5,
@@ -61,6 +70,7 @@ const Section3 = () => {
       description:
         "Got a full scholarship for M.Tech in Web Development at ITMO University, Russia.",
       color: "#27ae60",
+      images: [ITMO, ItmoLogo],
     },
     {
       id: 6,
@@ -72,6 +82,7 @@ const Section3 = () => {
       type: "work",
       description: "Worked as a MERN stack developer at Alendei Platforms.",
       color: "#27ae60",
+      images: [Alendei],
     },
     {
       id: 7,
@@ -84,17 +95,18 @@ const Section3 = () => {
       description:
         "Started working as a MERN stack, AI/ML Developer at GradScaler.",
       color: "#f39c12",
+      images: [],
     },
   ];
 
   return (
     <div className="w-full min-h-screen bg-transparent p-8 flex flex-col items-center justify-center">
       {/* Title */}
-      <div className="text-center mb-16">
+      {/* <div className="text-center mb-16">
         <h2 className="text-4xl font-bold mb-4 text-gray-800">
           My Journey Timeline
         </h2>
-      </div>
+      </div> */}
 
       {/* Timeline Container */}
       <div className="w-full max-w-7xl overflow-x-auto py-8">
@@ -130,6 +142,17 @@ const Section3 = () => {
           {/* Timeline Events */}
           {timelineEvents.map((event, index) => {
             const isAbove = index % 2 === 0;
+            const topPosition = isAbove
+              ? event.images.length > 0
+                ? "80px"
+                : "140px"
+              : "auto";
+            const bottomPosition = isAbove
+              ? "auto"
+              : event.images.length > 0
+              ? "80px"
+              : "140px";
+
             const leftPosition = index * 350 + 175;
 
             return (
@@ -151,8 +174,8 @@ const Section3 = () => {
                 <div
                   style={{
                     position: "absolute",
-                    top: isAbove ? "80px" : "auto",
-                    bottom: isAbove ? "auto" : "80px",
+                    top: topPosition,
+                    bottom: bottomPosition,
                     width: "100%",
                     zIndex: 10,
                   }}
@@ -173,8 +196,8 @@ const Section3 = () => {
                     }}
                   >
                     {/* Left Column - Date */}
-                    <div className="flex-none w-20 flex flex-col items-center justify-center text-center pr-4 border-r border-gray-100">
-                      <div className="text-xs text-gray-500 font-medium leading-tight mb-1">
+                    <div className="flex-none w-20 flex flex-col items-center justify-center text-center pr-4 border-r border-gray-100 gap-1">
+                      <div className="text-xs text-gray-500 font-medium leading-tight mb-1 ">
                         {event.date}
                       </div>
                       <div className="text-3xl text-gray-900 font-bold leading-none mb-1">
@@ -200,33 +223,36 @@ const Section3 = () => {
                         </p>
                       </div>
 
-                      {/* Row 2 - Images */}
-                      <div className="flex gap-2 mt-auto">
-                        <div
-                          className="w-10 h-10 rounded-md flex items-center justify-center text-white text-xs font-semibold"
-                          style={{
-                            background: `linear-gradient(45deg, ${event.color}, ${event.color}80)`,
-                          }}
-                        >
-                          IMG
+                      {/* Row 2 - Images (only display if images exist) */}
+                      {event.images && event.images.length > 0 && (
+                        <div className="flex gap-2 mt-auto">
+                          {event.images.map((image, imgIndex) => (
+                            <div
+                              key={imgIndex}
+                              className="w-16 h-10 rounded-md overflow-hidden flex items-center justify-center"
+                              style={{
+                                background:
+                                  imgIndex === 0
+                                    ? `linear-gradient(45deg, ${event.color}, ${event.color}80)`
+                                    : imgIndex === 1
+                                    ? `linear-gradient(135deg, ${event.color}60, ${event.color}40)`
+                                    : `linear-gradient(225deg, ${event.color}40, ${event.color}20)`,
+                              }}
+                            >
+                              <img
+                                src={image}
+                                alt={`${event.title} image ${imgIndex + 1}`}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  // Fallback to colored placeholder if image fails to load
+                                  e.target.style.display = "none";
+                                  e.target.parentElement.innerHTML = `<span class="text-white text-xs font-semibold">IMG</span>`;
+                                }}
+                              />
+                            </div>
+                          ))}
                         </div>
-                        <div
-                          className="w-10 h-10 rounded-md flex items-center justify-center text-white text-xs font-semibold"
-                          style={{
-                            background: `linear-gradient(135deg, ${event.color}60, ${event.color}40)`,
-                          }}
-                        >
-                          IMG
-                        </div>
-                        <div
-                          className="w-10 h-10 rounded-md flex items-center justify-center text-white text-xs font-semibold"
-                          style={{
-                            background: `linear-gradient(225deg, ${event.color}40, ${event.color}20)`,
-                          }}
-                        >
-                          IMG
-                        </div>
-                      </div>
+                      )}
                     </div>
                   </div>
 
