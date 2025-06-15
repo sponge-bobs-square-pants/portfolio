@@ -75,17 +75,6 @@ const Section3 = () => {
     },
     {
       id: 7,
-      title: "El",
-      subtitle: "",
-      date: "June",
-      day: "19",
-      year: "2024",
-      type: "work",
-      description: "Got El, the labrador. My partner in crime.",
-      color: "#f39c12",
-    },
-    {
-      id: 8,
       title: "Md. Developer",
       subtitle: "",
       date: "Sept",
@@ -95,18 +84,6 @@ const Section3 = () => {
       description:
         "Started working as a MERN stack, AI/ML Developer at GradScaler.",
       color: "#f39c12",
-    },
-    {
-      id: 9,
-      title: "Engagement",
-      subtitle: "",
-      date: "Nov",
-      day: "30",
-      year: "2025",
-      type: "personal",
-      description: "Have plans to be engaged to Masha by November 2025.",
-      color: "#ff6b6b",
-      upcoming: true,
     },
   ];
 
@@ -170,95 +147,111 @@ const Section3 = () => {
                   transform: "translateX(-50%)",
                 }}
               >
-                {/* Event Card with Date Inside */}
+                {/* Event Card Container with Arrow */}
                 <div
-                  onClick={() => setSelectedEvent(event)}
                   style={{
                     position: "absolute",
-                    top: isAbove ? "50px" : "auto",
-                    bottom: isAbove ? "auto" : "50px",
-                    background: "white",
-                    padding: "1.5rem",
-                    borderRadius: "8px",
+                    top: isAbove ? "80px" : "auto",
+                    bottom: isAbove ? "auto" : "80px",
                     width: "100%",
-                    cursor: "pointer",
-                    transition: "transform 0.2s ease, box-shadow 0.2s ease",
                     zIndex: 10,
-                    display: "flex",
-                    gap: "1rem",
                   }}
                 >
-                  {/* Left Column - Date */}
-                  <div className="flex-none w-20 flex flex-col items-center justify-center text-center pr-4 border-r border-gray-100">
-                    <div className="text-xs text-gray-500 font-medium leading-tight mb-1">
-                      {event.date}
+                  {/* Event Card with Date Inside */}
+                  <div
+                    onClick={() => setSelectedEvent(event)}
+                    style={{
+                      background: "white",
+                      padding: "1.5rem",
+                      borderRadius: "8px",
+                      width: "100%",
+                      cursor: "pointer",
+                      transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                      display: "flex",
+                      gap: "1rem",
+                      position: "relative",
+                    }}
+                  >
+                    {/* Left Column - Date */}
+                    <div className="flex-none w-20 flex flex-col items-center justify-center text-center pr-4 border-r border-gray-100">
+                      <div className="text-xs text-gray-500 font-medium leading-tight mb-1">
+                        {event.date}
+                      </div>
+                      <div className="text-3xl text-gray-900 font-bold leading-none mb-1">
+                        {event.day}
+                      </div>
+                      <div className="text-xs text-gray-500 font-medium leading-tight">
+                        {event.year}
+                      </div>
                     </div>
-                    <div className="text-3xl text-gray-900 font-bold leading-none mb-1">
-                      {event.day}
-                    </div>
-                    <div className="text-xs text-gray-500 font-medium leading-tight">
-                      {event.year}
+
+                    {/* Right Column - Content */}
+                    <div className="flex-1 flex flex-col gap-4">
+                      {/* Row 1 - Info */}
+                      <div>
+                        <h3 className="text-lg text-gray-900 mb-2 font-semibold leading-tight">
+                          {event.title}
+                        </h3>
+                        <p className="text-sm text-gray-500 leading-relaxed m-0">
+                          {event.subtitle}
+                        </p>
+                        <p className="text-xs text-gray-400 leading-relaxed">
+                          {event.description}
+                        </p>
+                      </div>
+
+                      {/* Row 2 - Images */}
+                      <div className="flex gap-2 mt-auto">
+                        <div
+                          className="w-10 h-10 rounded-md flex items-center justify-center text-white text-xs font-semibold"
+                          style={{
+                            background: `linear-gradient(45deg, ${event.color}, ${event.color}80)`,
+                          }}
+                        >
+                          IMG
+                        </div>
+                        <div
+                          className="w-10 h-10 rounded-md flex items-center justify-center text-white text-xs font-semibold"
+                          style={{
+                            background: `linear-gradient(135deg, ${event.color}60, ${event.color}40)`,
+                          }}
+                        >
+                          IMG
+                        </div>
+                        <div
+                          className="w-10 h-10 rounded-md flex items-center justify-center text-white text-xs font-semibold"
+                          style={{
+                            background: `linear-gradient(225deg, ${event.color}40, ${event.color}20)`,
+                          }}
+                        >
+                          IMG
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Right Column - Content */}
-                  <div className="flex-1 flex flex-col gap-4">
-                    {/* Row 1 - Info */}
-                    <div>
-                      <h3 className="text-lg text-gray-900 mb-2 font-semibold leading-tight">
-                        {event.title}
-                      </h3>
-                      <p className="text-sm text-gray-500 leading-relaxed m-0">
-                        {event.subtitle}
-                      </p>
-                      <p className="text-xs text-gray-400 leading-relaxed">
-                        {event.description}
-                      </p>
-                    </div>
-
-                    {/* Row 2 - Images */}
-                    <div className="flex gap-2 mt-auto">
-                      <div
-                        className="w-10 h-10 rounded-md flex items-center justify-center text-white text-xs font-semibold"
-                        style={{
-                          background: `linear-gradient(45deg, ${event.color}, ${event.color}80)`,
-                        }}
-                      >
-                        IMG
-                      </div>
-                      <div
-                        className="w-10 h-10 rounded-md flex items-center justify-center text-white text-xs font-semibold"
-                        style={{
-                          background: `linear-gradient(135deg, ${event.color}60, ${event.color}40)`,
-                        }}
-                      >
-                        IMG
-                      </div>
-                      <div
-                        className="w-10 h-10 rounded-md flex items-center justify-center text-white text-xs font-semibold"
-                        style={{
-                          background: `linear-gradient(225deg, ${event.color}40, ${event.color}20)`,
-                        }}
-                      >
-                        IMG
-                      </div>
-                    </div>
+                  {/* Arrow attached to the card */}
+                  <div
+                    style={{
+                      position: "absolute",
+                      left: "50%",
+                      transform: "translateX(-50%) rotate(180deg)",
+                      top: isAbove ? "100%" : "-16px",
+                      zIndex: 15,
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "0",
+                        height: "0",
+                        borderLeft: "12px solid transparent",
+                        borderRight: "12px solid transparent",
+                        borderTop: isAbove ? "0" : "16px solid white",
+                        borderBottom: isAbove ? "16px solid white" : "0",
+                      }}
+                    />
                   </div>
                 </div>
-
-                {/* Connection Line */}
-                <div
-                  style={{
-                    position: "absolute",
-                    left: "50%",
-                    width: "1px",
-                    height: "100px",
-                    background: "#d1d5db",
-                    transform: "translateX(-50%)",
-                    top: isAbove ? "calc(50% - 100px)" : "50%",
-                    zIndex: 5,
-                  }}
-                />
               </div>
             );
           })}
