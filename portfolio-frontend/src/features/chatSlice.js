@@ -30,6 +30,7 @@ export const NewConversation = createAsyncThunk(
     }
   }
 );
+
 export const TrinityChat = createAsyncThunk(
   "Chat/TrinityChat",
   async (params, thunkAPI) => {
@@ -62,7 +63,7 @@ const chatSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // SIGN UP
+    // NEW CONVERSATION
     builder.addCase(NewConversation.pending, (state) => {
       state.ChatStatus.isPending = true;
       state.ChatStatus.isFulfilled = false;
@@ -73,12 +74,26 @@ const chatSlice = createSlice({
       state.ChatStatus.isFulfilled = true;
       state.ChatStatus.isRejected = false;
       state.thread_id = action.payload.data.thread_id;
-      state.messages.push({
-        id: Date.now(),
-        text: action.payload.data.message,
-        sender: "me",
-        timestamp: new Date().toISOString(),
-      });
+
+      // Handle structured response
+      if (action.payload.data.response) {
+        state.messages.push({
+          id: Date.now(),
+          response: action.payload.data.response,
+          sender: "assistant",
+          timestamp: new Date().toISOString(),
+        });
+      } else {
+        // Fallback for simple message
+        state.messages.push({
+          id: Date.now(),
+          text:
+            action.payload.data.message ||
+            "Hello! I'm Trinity, how can I help you?",
+          sender: "assistant",
+          timestamp: new Date().toISOString(),
+        });
+      }
     });
     builder.addCase(NewConversation.rejected, (state, action) => {
       state.ChatStatus.isPending = false;
@@ -86,6 +101,7 @@ const chatSlice = createSlice({
       state.ChatStatus.isRejected = true;
       state.error = action.payload.message || "An error occurred";
     });
+
     // TRINITY CHAT
     builder.addCase(TrinityChat.pending, (state) => {
       state.ChatStatus.isPending = true;
@@ -96,12 +112,26 @@ const chatSlice = createSlice({
       state.ChatStatus.isPending = false;
       state.ChatStatus.isFulfilled = true;
       state.ChatStatus.isRejected = false;
-      state.messages.push({
-        id: Date.now(),
-        text: action.payload.data.message,
-        sender: "me",
-        timestamp: new Date().toISOString(),
-      });
+
+      // Handle structured response
+      if (action.payload.data.response) {
+        state.messages.push({
+          id: Date.now(),
+          response: action.payload.data.response,
+          sender: "assistant",
+          timestamp: new Date().toISOString(),
+        });
+      } else {
+        // Fallback for simple message
+        state.messages.push({
+          id: Date.now(),
+          text:
+            action.payload.data.message ||
+            "I'm sorry, I couldn't process that.",
+          sender: "assistant",
+          timestamp: new Date().toISOString(),
+        });
+      }
     });
     builder.addCase(TrinityChat.rejected, (state, action) => {
       state.ChatStatus.isPending = false;
