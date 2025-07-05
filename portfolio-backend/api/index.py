@@ -1,5 +1,3 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
 import datetime
 import uuid
 import threading
@@ -8,6 +6,8 @@ import warnings
 import os
 import traceback
 from typing import List, Dict, Any, Optional
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 from langchain_together import ChatTogether
 from langchain_core.messages import AIMessage, HumanMessage, ToolMessage, SystemMessage
 from langchain_core.runnables import RunnableConfig
@@ -56,6 +56,7 @@ class TrinityChat:
         )
         self.checkpointer = MemorySaver()
         self.system_prompt = self._get_system_prompt()
+        # Build graph without circular dependency
         self.agent_graph = self._build_graph()
     
     def _get_system_prompt(self):
@@ -112,6 +113,7 @@ class TrinityChat:
 
     def assistant(self, state: MessagesState):
         """Assistant function for processing messages with structured output"""
+        # Get thread_id from the configuration if available
         config = getattr(state, 'config', {})
         thread_id = config.get('configurable', {}).get('thread_id', 'unknown')
         
@@ -123,6 +125,7 @@ Today is: {datetime.datetime.now(datetime.UTC)}
 IMPORTANT: You must always respond with valid JSON that matches the AssistantOutput schema."""
 
         try:
+            # First try with structured output
             try:
                 structured_llm = self.model.with_structured_output(AssistantOutput, include_raw=False)
                 response = structured_llm.invoke([SystemMessage(content=system_prompt_with_context)] + state["messages"])
@@ -130,12 +133,14 @@ IMPORTANT: You must always respond with valid JSON that matches the AssistantOut
                 if response is None:
                     raise ValueError("Structured output returned None")
                 
+                # Convert structured response back to message format for the graph
                 ai_message = AIMessage(content=response.model_dump_json())
                 return {'messages': [ai_message]}
                 
             except Exception as structured_error:
                 print(f"Structured output failed: {str(structured_error)}")
                 
+                # Fallback to regular LLM with JSON instruction
                 json_prompt = f"""{system_prompt_with_context}
 
 Please respond with valid JSON in exactly this format:
@@ -150,14 +155,18 @@ Please respond with valid JSON in exactly this format:
                 regular_response = self.model.invoke([SystemMessage(content=json_prompt)] + state["messages"])
                 response_text = regular_response.content
                 
+                # Try to parse as JSON
                 try:
                     response_json = json.loads(response_text)
+                    # Validate with Pydantic
                     validated_response = AssistantOutput(**response_json)
                     ai_message = AIMessage(content=validated_response.model_dump_json())
                     return {'messages': [ai_message]}
                 except:
+                    # If JSON parsing fails, create a structured response
                     user_message = state["messages"][-1].content if state["messages"] else ""
                     
+                    # Determine response type and content based on user message
                     if any(word in user_message.lower() for word in ['contact', 'reach', 'email', 'social']):
                         fallback_response = AssistantOutput(
                             message="Here are Parth's contact details:",
@@ -188,6 +197,13 @@ Please respond with valid JSON in exactly this format:
                                     description="Built trainable chatbot across websites for enhanced user support",
                                     technologies=["Python", "AI/ML", "Web APIs"],
                                     impact="35% engagement increase, reduced support response times"
+                                ),
+                                Project(
+                                    name="eKYC Verification Server",
+                                    company="Alendei Platforms",
+                                    description="Developed PAN, Aadhar, and Bank verification with admin dashboard",
+                                    technologies=["Python", "APIs", "Database"],
+                                    impact="40% faster verification, improved accuracy"
                                 )
                             ],
                             suggested_questions=["Tell me more about a specific project", "What technologies does he specialize in?"]
@@ -205,6 +221,7 @@ Please respond with valid JSON in exactly this format:
         except Exception as e:
             print(f"Error in assistant function: {str(e)}")
             traceback.print_exc()
+            # Final fallback response
             fallback_response = AssistantOutput(
                 message="I'm sorry, I encountered an error. Please try again.",
                 type="text",
@@ -228,6 +245,7 @@ Please respond with valid JSON in exactly this format:
         thread_id = str(uuid.uuid4())
         
         try:
+            # Create welcome response directly without invoking the graph
             welcome_response = AssistantOutput(
                 message="Hello! I'm Trinity, your assistant for learning about Parth's portfolio. I can help you discover his projects, skills, and contact information.",
                 type="welcome",
@@ -271,10 +289,14 @@ Please respond with valid JSON in exactly this format:
             
             result = self.agent_graph.invoke(state, config)
             
+            # Parse the structured response from the AI message
             response_content = result["messages"][-1].content
             
             try:
+                # Parse the JSON response into AssistantOutput
                 response_data = json.loads(response_content)
+                
+                # Validate the response data
                 structured_response = AssistantOutput(**response_data)
                 
                 return {
@@ -286,6 +308,7 @@ Please respond with valid JSON in exactly this format:
             except json.JSONDecodeError as e:
                 print(f"JSON decode error: {str(e)}")
                 print(f"Response content: {response_content}")
+                # Fallback to simple text response
                 return {
                     "response": {
                         "message": response_content,
@@ -300,6 +323,7 @@ Please respond with valid JSON in exactly this format:
             
             except Exception as e:
                 print(f"Validation error: {str(e)}")
+                # Fallback to simple text response
                 return {
                     "response": {
                         "message": "I'm here to help you learn about Parth's portfolio. What would you like to know?",
@@ -336,12 +360,14 @@ Please respond with valid JSON in exactly this format:
                     })
                 elif isinstance(msg, AIMessage):
                     try:
+                        # Try to parse structured response
                         structured_content = json.loads(msg.content)
                         messages.append({
                             "role": "assistant",
                             "response": structured_content
                         })
                     except:
+                        # Fallback to simple content
                         messages.append({
                             "role": "assistant",
                             "response": {
@@ -365,38 +391,30 @@ Please respond with valid JSON in exactly this format:
             }
 
 
-# Initialize the Flask app
+# Flask App
 app = Flask(__name__)
 CORS(app)
 
-# Global Trinity Chat instance
-trinity_chat = None
+# Initialize Trinity Chat
+try:
+    trinity_chat = TrinityChat()
+    print("Trinity Chat initialized successfully!")
+except Exception as e:
+    print(f"Failed to initialize Trinity Chat: {str(e)}")
+    traceback.print_exc()
+    trinity_chat = None
 
-def get_trinity_chat():
-    """Get or create Trinity Chat instance"""
-    global trinity_chat
-    if trinity_chat is None:
-        try:
-            trinity_chat = TrinityChat()
-            print("Trinity Chat initialized successfully!")
-        except Exception as e:
-            print(f"Failed to initialize Trinity Chat: {str(e)}")
-            traceback.print_exc()
-            return None
-    return trinity_chat
-
-@app.route('/api/new_conversation', methods=['POST'])
+@app.route('/new_conversation', methods=['POST'])
 def new_conversation():
     """Create a new conversation"""
     try:
-        chat_instance = get_trinity_chat()
-        if not chat_instance:
+        if not trinity_chat:
             return jsonify({
                 "error": "Trinity Chat not initialized",
                 "status": "error"
             }), 500
             
-        result = chat_instance.create_new_conversation()
+        result = trinity_chat.create_new_conversation()
         return jsonify(result), 200
     except Exception as e:
         print(f"Error in new_conversation endpoint: {str(e)}")
@@ -406,12 +424,11 @@ def new_conversation():
             "status": "error"
         }), 500
 
-@app.route('/api/chat', methods=['POST'])
+@app.route('/chat', methods=['POST'])
 def chat():
     """Send a message and get structured response"""
     try:
-        chat_instance = get_trinity_chat()
-        if not chat_instance:
+        if not trinity_chat:
             return jsonify({
                 "error": "Trinity Chat not initialized",
                 "status": "error"
@@ -441,7 +458,7 @@ def chat():
                 "status": "error"
             }), 400
         
-        result = chat_instance.send_message(message, thread_id)
+        result = trinity_chat.send_message(message, thread_id)
         print(f"Chat result: {result}")
         
         if result.get("status") == "error":
@@ -457,18 +474,17 @@ def chat():
             "status": "error"
         }), 500
 
-@app.route('/api/conversation_history/<thread_id>', methods=['GET'])
+@app.route('/conversation_history/<thread_id>', methods=['GET'])
 def get_conversation_history(thread_id):
     """Get conversation history"""
     try:
-        chat_instance = get_trinity_chat()
-        if not chat_instance:
+        if not trinity_chat:
             return jsonify({
                 "error": "Trinity Chat not initialized",
                 "status": "error"
             }), 500
             
-        result = chat_instance.get_conversation_history(thread_id)
+        result = trinity_chat.get_conversation_history(thread_id)
         
         if result.get("status") == "error":
             return jsonify(result), 500
@@ -483,15 +499,14 @@ def get_conversation_history(thread_id):
             "status": "error"
         }), 500
 
-@app.route('/api/health', methods=['GET'])
+@app.route('/health', methods=['GET'])
 def health_check():
     """Health check endpoint"""
-    chat_instance = get_trinity_chat()
     return jsonify({
-        "status": "healthy" if chat_instance else "unhealthy",
+        "status": "healthy" if trinity_chat else "unhealthy",
         "service": "Trinity Chat API",
         "timestamp": datetime.datetime.now(datetime.UTC).isoformat(),
-        "trinity_initialized": chat_instance is not None
+        "trinity_initialized": trinity_chat is not None
     }), 200
 
 @app.errorhandler(404)
@@ -508,7 +523,13 @@ def internal_error(error):
         "status": "error"
     }), 500
 
-# For Vercel deployment
-def handler(request):
-    """Vercel serverless function handler"""
-    return app(request.environ, lambda *args: None)
+if __name__ == '__main__':
+    print("Starting Trinity Chat API with Structured Output...")
+    if trinity_chat:
+        print(f"Model: {trinity_chat.model_name}")
+    print("API Endpoints:")
+    print("  POST /new_conversation - Create a new conversation")
+    print("  POST /chat - Send a message (returns structured response)")
+    print("  GET /conversation_history/<thread_id> - Get conversation history")
+    print("  GET /health - Health check")
+    app.run(debug=True, host='0.0.0.0', port=5002)
