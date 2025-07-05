@@ -523,6 +523,13 @@ def internal_error(error):
         "status": "error"
     }), 500
 
+# Export the app for Vercel
+def handler(request):
+    return app(request.environ, lambda status, headers: None)
+
+# For Vercel deployment
+app.wsgi_app = app.wsgi_app
+
 if __name__ == '__main__':
     print("Starting Trinity Chat API with Structured Output...")
     if trinity_chat:
