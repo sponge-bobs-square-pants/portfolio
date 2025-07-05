@@ -532,4 +532,4 @@ if __name__ == '__main__':
     print("  POST /chat - Send a message (returns structured response)")
     print("  GET /conversation_history/<thread_id> - Get conversation history")
     print("  GET /health - Health check")
-    app.run(debug=True, host='0.0.0.0', port=5002)
+    app.run(debug=True, host='0.0.0.0', port=os.getenv("PORT", 5002))
