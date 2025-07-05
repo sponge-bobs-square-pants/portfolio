@@ -1,7 +1,8 @@
-import { createSlice, createAsyncThunk, isPending } from "@reduxjs/toolkit";
-import { User } from "lucide-react";
-import axios from "axios";
-const url = "http://localhost:5002";
+import { createSlice, createAsyncThunk, isPending } from '@reduxjs/toolkit';
+import { User } from 'lucide-react';
+import axios from 'axios';
+// const url = "http://localhost:5002";
+const url = 'https://portfolio-afkm.onrender.com';
 
 const initialState = {
   ChatStatus: {
@@ -10,12 +11,12 @@ const initialState = {
     isRejected: false,
   },
   messages: [],
-  thread_id: "",
+  thread_id: '',
   socketConnected: false,
 };
 
 export const NewConversation = createAsyncThunk(
-  "Chat/NewConversation",
+  'Chat/NewConversation',
   async (params, thunkAPI) => {
     try {
       const response = await axios.post(`${url}/new_conversation`);
@@ -25,14 +26,14 @@ export const NewConversation = createAsyncThunk(
       };
     } catch (error) {
       return thunkAPI.rejectWithValue({
-        message: error.response ? error.response.data.message : "Network Error",
+        message: error.response ? error.response.data.message : 'Network Error',
       });
     }
   }
 );
 
 export const TrinityChat = createAsyncThunk(
-  "Chat/TrinityChat",
+  'Chat/TrinityChat',
   async (params, thunkAPI) => {
     try {
       const response = await axios.post(`${url}/chat`, params);
@@ -42,14 +43,14 @@ export const TrinityChat = createAsyncThunk(
       };
     } catch (error) {
       return thunkAPI.rejectWithValue({
-        message: error.response ? error.response.data.message : "Network Error",
+        message: error.response ? error.response.data.message : 'Network Error',
       });
     }
   }
 );
 
 const chatSlice = createSlice({
-  name: "Chat",
+  name: 'Chat',
   initialState,
   reducers: {
     addMessage: (state, action) => {
@@ -57,7 +58,7 @@ const chatSlice = createSlice({
       state.messages.push({
         id: Date.now(),
         text,
-        sender: "user",
+        sender: 'user',
         timestamp: new Date().toISOString(),
       });
     },
@@ -80,7 +81,7 @@ const chatSlice = createSlice({
         state.messages.push({
           id: Date.now(),
           response: action.payload.data.response,
-          sender: "assistant",
+          sender: 'assistant',
           timestamp: new Date().toISOString(),
         });
       } else {
@@ -90,7 +91,7 @@ const chatSlice = createSlice({
           text:
             action.payload.data.message ||
             "Hello! I'm Trinity, how can I help you?",
-          sender: "assistant",
+          sender: 'assistant',
           timestamp: new Date().toISOString(),
         });
       }
@@ -99,7 +100,7 @@ const chatSlice = createSlice({
       state.ChatStatus.isPending = false;
       state.ChatStatus.isFulfilled = false;
       state.ChatStatus.isRejected = true;
-      state.error = action.payload.message || "An error occurred";
+      state.error = action.payload.message || 'An error occurred';
     });
 
     // TRINITY CHAT
@@ -118,7 +119,7 @@ const chatSlice = createSlice({
         state.messages.push({
           id: Date.now(),
           response: action.payload.data.response,
-          sender: "assistant",
+          sender: 'assistant',
           timestamp: new Date().toISOString(),
         });
       } else {
@@ -128,7 +129,7 @@ const chatSlice = createSlice({
           text:
             action.payload.data.message ||
             "I'm sorry, I couldn't process that.",
-          sender: "assistant",
+          sender: 'assistant',
           timestamp: new Date().toISOString(),
         });
       }
@@ -137,7 +138,7 @@ const chatSlice = createSlice({
       state.ChatStatus.isPending = false;
       state.ChatStatus.isFulfilled = false;
       state.ChatStatus.isRejected = true;
-      state.error = action.payload.message || "An error occurred";
+      state.error = action.payload.message || 'An error occurred';
     });
   },
 });
