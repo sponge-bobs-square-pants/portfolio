@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.py"
+    }
+  ],
+  "env": {
+    "TOGETHER_API_KEY": "@together_api_key"
+  },
+  "functions": {
+    "api/index.py": {
+      "maxDuration": 300
+    }
+  }
+}
