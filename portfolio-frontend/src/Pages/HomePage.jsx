@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from "react";
-import LoadingAnimation from "../Components/LoadingAnimation";
-import Navbar from "../Components/Navbar";
-import Introduction from "../Components/Introduction";
-import Section2 from "../Components/Section2";
-import Section3 from "../Components/Section3";
-import Section4 from "../Components/Section4";
-import { useDispatch } from "react-redux";
-import { NewConversation } from "../features/chatSlice";
+import React, { useState, useEffect } from 'react';
+import LoadingAnimation from '../Components/LoadingAnimation';
+import Navbar from '../Components/Navbar';
+import Introduction from '../Components/Introduction';
+import Section2 from '../Components/Section2';
+import Section3 from '../Components/Section3';
+import Section4 from '../Components/Section4';
+import { useDispatch } from 'react-redux';
+import { NewConversation } from '../features/chatSlice';
 
 const HomePage = () => {
   const [loaded, setLoaded] = useState(false);
   const [contentVisible, setContentVisible] = useState(false);
-  const [activeSection, setActiveSection] = useState("section1");
+  const [activeSection, setActiveSection] = useState('section1');
 
   // Handle the staged transitions
   useEffect(() => {
@@ -28,8 +28,8 @@ const HomePage = () => {
   // Scroll detection to update active section
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ["section1", "section2", "section3", "section4"];
-      const scrollContainer = document.querySelector("[data-scroll-container]");
+      const sections = ['section1', 'section2', 'section3', 'section4'];
+      const scrollContainer = document.querySelector('[data-scroll-container]');
 
       if (!scrollContainer) return;
 
@@ -37,7 +37,7 @@ const HomePage = () => {
       const containerHeight = scrollContainer.clientHeight;
 
       // Calculate which section is most visible
-      let currentSection = "section1";
+      let currentSection = 'section1';
 
       for (const sectionId of sections) {
         const section = document.getElementById(sectionId);
@@ -64,18 +64,25 @@ const HomePage = () => {
     };
 
     if (contentVisible) {
-      const scrollContainer = document.querySelector("[data-scroll-container]");
+      const scrollContainer = document.querySelector('[data-scroll-container]');
       if (scrollContainer) {
-        scrollContainer.addEventListener("scroll", handleScroll);
+        scrollContainer.addEventListener('scroll', handleScroll);
         // Initial check
         handleScroll();
 
         return () =>
-          scrollContainer.removeEventListener("scroll", handleScroll);
+          scrollContainer.removeEventListener('scroll', handleScroll);
       }
     }
   }, [contentVisible]);
-
+  useEffect(() => {
+    console.log('Hey there!');
+    console.log('Welcome to my porfolio website! I hope you like it.');
+    console.log(
+      'Looks like you are a developer! If you want to see the code, you can find it here: https://github.com/sponge-bobs-square-pants/portfolio'
+    );
+    console.log('Star the repo if you like it! :)');
+  }, []);
   // Function to handle loading completion from animation
   const handleAnimationComplete = () => {
     setLoaded(true);
@@ -87,15 +94,15 @@ const HomePage = () => {
   };
 
   return (
-    <div style={{ position: "relative", width: "100vw", height: "100vh" }}>
+    <div style={{ position: 'relative', width: '100vw', height: '100vh' }}>
       {/* Loading animation layer - stays visible as background */}
       <div
         style={{
-          position: "fixed",
+          position: 'fixed',
           top: 0,
           left: 0,
-          width: "100vw",
-          height: "100vh",
+          width: '100vw',
+          height: '100vh',
           zIndex: 0,
         }}
       >
@@ -105,15 +112,15 @@ const HomePage = () => {
       {/* Fixed Navbar on top of content - properly centered */}
       <div
         style={{
-          position: "fixed",
-          top: "8px",
+          position: 'fixed',
+          top: '8px',
           left: 0,
-          width: "100%", // Full width
-          display: "flex",
-          justifyContent: "center", // Center horizontally
+          width: '100%', // Full width
+          display: 'flex',
+          justifyContent: 'center', // Center horizontally
           zIndex: 50,
           opacity: contentVisible ? 1 : 0,
-          transition: "opacity 2s ease 0.5s",
+          transition: 'opacity 2s ease 0.5s',
         }}
       >
         <Navbar activeSection={activeSection} onNavClick={handleNavClick} />
@@ -123,80 +130,80 @@ const HomePage = () => {
       <div
         data-scroll-container
         style={{
-          height: "100vh",
-          overflowY: "scroll",
-          scrollSnapType: "y mandatory",
-          scrollBehavior: "smooth",
+          height: '100vh',
+          overflowY: 'scroll',
+          scrollSnapType: 'y mandatory',
+          scrollBehavior: 'smooth',
           opacity: contentVisible ? 1 : 0,
-          transform: `translateY(${contentVisible ? "0" : "40px"})`,
-          transition: "opacity 2.5s ease, transform 2.5s ease",
-          position: "relative",
+          transform: `translateY(${contentVisible ? '0' : '40px'})`,
+          transition: 'opacity 2.5s ease, transform 2.5s ease',
+          position: 'relative',
           zIndex: 10,
-          background: "transparent",
+          background: 'transparent',
         }}
       >
         <div
-          id="section1"
+          id='section1'
           style={{
-            height: "100vh",
-            width: "100vw",
-            scrollSnapAlign: "start",
+            height: '100vh',
+            width: '100vw',
+            scrollSnapAlign: 'start',
             margin: 0,
             padding: 0,
             opacity: contentVisible ? 1 : 0,
-            transition: "opacity 3s ease 0.2s",
-            background: "transparent",
+            transition: 'opacity 3s ease 0.2s',
+            background: 'transparent',
           }}
         >
           <Introduction />
         </div>
         <div
-          id="section2"
+          id='section2'
           style={{
-            height: "100vh",
-            width: "100vw",
-            scrollSnapAlign: "start",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            fontSize: "2rem",
+            height: '100vh',
+            width: '100vw',
+            scrollSnapAlign: 'start',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            fontSize: '2rem',
             opacity: contentVisible ? 1 : 0,
-            transition: "opacity 3s ease 0.4s",
-            background: "transparent",
+            transition: 'opacity 3s ease 0.4s',
+            background: 'transparent',
           }}
         >
           <Section2 />
         </div>
         <div
-          id="section3"
+          id='section3'
           style={{
-            height: "100vh",
-            width: "100vw",
-            scrollSnapAlign: "start",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            fontSize: "2rem",
+            height: '100vh',
+            width: '100vw',
+            scrollSnapAlign: 'start',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            fontSize: '2rem',
             opacity: contentVisible ? 1 : 0,
-            transition: "opacity 3s ease 0.6s",
-            background: "transparent",
+            transition: 'opacity 3s ease 0.6s',
+            background: 'transparent',
           }}
         >
           <Section3 />
         </div>
         <div
-          id="section4"
+          id='section4'
           style={{
-            height: "100vh",
-            width: "100vw",
-            scrollSnapAlign: "start",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            fontSize: "2rem",
+            height: '100vh',
+            width: '100vw',
+            scrollSnapAlign: 'start',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            fontSize: '2rem',
             opacity: contentVisible ? 1 : 0,
-            transition: "opacity 3s ease 0.6s",
-            background: "transparent",
+            transition: 'opacity 3s ease 0.6s',
+            background: 'transparent',
           }}
         >
           <Section4 />

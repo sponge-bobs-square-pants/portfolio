@@ -1,7 +1,7 @@
-import React, { useRef, useState, useEffect, useCallback } from "react";
-import { projects as initialProjects } from "../assets/data";
-import Card from "./Card";
-import { AnimatePresence } from "framer-motion";
+import React, { useRef, useState, useEffect, useCallback } from 'react';
+import { projects as initialProjects } from '../assets/data';
+import Card from './Card';
+import { AnimatePresence } from 'framer-motion';
 
 const ProjectsSection = () => {
   const container = useRef(null);
@@ -55,7 +55,7 @@ const ProjectsSection = () => {
   }, [expandedCardId]);
 
   const handleRemove = (projectNumber) => {
-    console.log("Removing project with number:", projectNumber);
+    // console.log("Removing project with number:", projectNumber);
     setProjectList((prevProjects) =>
       prevProjects.filter((project) => project.id !== projectNumber)
     );
@@ -92,29 +92,29 @@ const ProjectsSection = () => {
   return (
     <div
       style={{
-        width: "100%",
-        height: "100vh",
-        display: "flex",
-        background: "transparent",
+        width: '100%',
+        height: '100vh',
+        display: 'flex',
+        background: 'transparent',
       }}
     >
       {/* Left Column - 30% */}
       <div
         style={{
-          width: "30%",
-          height: "100%",
-          display: "flex", // Always show the left column
-          flexDirection: "column",
-          justifyContent: "center",
-          padding: "0 2rem",
+          width: '30%',
+          height: '100%',
+          display: 'flex', // Always show the left column
+          flexDirection: 'column',
+          justifyContent: 'center',
+          padding: '0 2rem',
         }}
       >
         <h2
-          style={{ fontSize: "3rem", fontWeight: "bold", marginBottom: "1rem" }}
+          style={{ fontSize: '3rem', fontWeight: 'bold', marginBottom: '1rem' }}
         >
           My Projects
         </h2>
-        <p style={{ fontSize: "1.2rem", color: "#666", lineHeight: "1.6" }}>
+        <p style={{ fontSize: '1.2rem', color: '#666', lineHeight: '1.6' }}>
           Here are some of my most recent projects. Scroll over them to see the
           projects.
         </p>
@@ -125,17 +125,17 @@ const ProjectsSection = () => {
         ref={container}
         onScroll={handleScroll}
         style={{
-          width: "70%",
-          height: "100vh",
-          overflowY: expandedCardId !== null ? "hidden" : "auto",
-          overflowX: "hidden",
-          position: "relative",
+          width: '70%',
+          height: '100vh',
+          overflowY: expandedCardId !== null ? 'hidden' : 'auto',
+          overflowX: 'hidden',
+          position: 'relative',
           // Add hardware acceleration
-          willChange: expandedCardId === null ? "scroll-position" : "auto",
+          willChange: expandedCardId === null ? 'scroll-position' : 'auto',
         }}
       >
-        <AnimatePresence mode="popLayout">
-          {" "}
+        <AnimatePresence mode='popLayout'>
+          {' '}
           {/* Add mode for better performance */}
           {projectList.map((project, index) => {
             const targetScale = 1 - (projectList.length - index) * 0.05;
